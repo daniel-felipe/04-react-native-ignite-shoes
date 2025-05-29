@@ -1,6 +1,8 @@
+import { useEffect } from 'react';
+
 import { StatusBar } from 'react-native';
 import { CartContextProvider } from './src/contexts/CartContext';
-import { OneSignal } from 'react-native-onesignal';
+import { NotificationClickEvent, OneSignal } from 'react-native-onesignal';
 import { NativeBaseProvider } from 'native-base';
 import {
   useFonts,
@@ -21,6 +23,20 @@ export default function App() {
   const [fontsLoaded] = useFonts({ Roboto_400Regular, Roboto_700Bold });
 
   tagUserInfoCreate();
+
+  useEffect(() => {
+    const handleNotificationClick = (event: NotificationClickEvent): void => {
+      console.log(event);
+    };
+
+    OneSignal.Notifications.addEventListener('click', handleNotificationClick);
+
+    return () =>
+      OneSignal.Notifications.removeEventListener(
+        'click',
+        handleNotificationClick
+      );
+  }, []);
 
   return (
     <NativeBaseProvider theme={THEME}>
